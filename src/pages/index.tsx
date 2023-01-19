@@ -2,12 +2,13 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "../../components/layout";
+import Login from "../../components/login";
 
 const Home: NextPage = () => {
   return (
     <>
       <Layout>
-        <div className="text-white">login</div>
+        <Login/> 
       </Layout>
     </>
   );
