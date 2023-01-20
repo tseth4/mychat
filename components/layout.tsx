@@ -5,14 +5,15 @@ import React, { ReactNode } from "react";
 // import Header from "./login";
 import { useTheme } from "next-themes";
 // import { ThemeProvider } from "next-themes";
+import Header from "./header";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const handleSetTheme = () => {
-    if (theme === 'light'){
-      setTheme('dark');
+    if (theme === "light") {
+      setTheme("dark");
     } else {
-      setTheme('light')
+      setTheme("light");
     }
   };
 
@@ -24,10 +25,11 @@ export default function Layout({ children }: { children: ReactNode }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* <Header /> */}
+      <Header />
       <a onClick={() => handleSetTheme()} className="border-2">
         light/dark
       </a>
-      <main className="border-2 border-pureWhite dark:border-blackGradient">
+      <main className="flex min-h-screen items-center justify-center border-2 border-blackGradient dark:border-pureWhite">
         {children}
       </main>
     </>
