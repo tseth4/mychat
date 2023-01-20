@@ -7,11 +7,10 @@ export default function ChatBox() {
   const [value, setValue] = useState("");
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  autoSizeTextArea(textAreaRef.current, value);
+  autoSizeTextArea(textAreaRef.current, value, 125);
 
   const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = evt.target?.value;
-
     setValue(val);
   };
 
@@ -39,7 +38,9 @@ export default function ChatBox() {
             dark:bg-darkBlue 
             dark:text-white"
           />
-          <button className="h-fit w-20 border">send</button>
+          <div className="flex items-end">
+            <button className="h-fit w-20 border align-bottom">send</button>
+          </div>
         </div>
       </div>
     </>
