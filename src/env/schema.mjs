@@ -1,4 +1,5 @@
 // @ts-check
+import { env } from "process";
 import { z } from "zod";
 
 /**
@@ -20,6 +21,10 @@ export const serverSchema = z.object({
   ),
   GITHUB_ID: z.string(),
   GITHUB_SECRET: z.string(),
+  PUSHER_APP_ID: z.string(),
+  PUSHER_KEY: z.string(),
+  PUSHER_SECRET: z.string(),
+  PUSHER_CLUSTER: z.string()
 });
 
 /**
@@ -33,6 +38,10 @@ export const serverEnv = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   GITHUB_ID: process.env.GITHUB_ID,
   GITHUB_SECRET: process.env.GITHUB_SECRET,
+  PUSHER_APP_ID: process.env.PUSHER_KEY,
+  PUSHER_KEY: process.env.PUSHER_KEY,
+  PUSHER_SECRET: process.env.PUSHER_KEY,
+  PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
 };
 
 /**

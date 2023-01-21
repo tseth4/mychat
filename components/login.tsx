@@ -5,7 +5,6 @@ export default function Component() {
   if (session) {
     return (
       <>
-        <div className="text-white">Signed in as </div>
         <div className="text-white">
           {session.user ? session.user.email : ""} <br />
         </div>

@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <a onClick={() => handleSetTheme()} className="border-2">
         light/dark
       </a>
-      <main className="flex min-h-screen items-center justify-center border-2 border-blackGradient dark:border-pureWhite">
+      <main className="flex min-h-screen items-center justify-center border-blackGradient dark:border-pureWhite">
         {children}
       </main>
     </>

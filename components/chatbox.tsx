@@ -16,9 +16,13 @@ export default function ChatBox() {
 
   return (
     <>
-      <div className="flex h-96 w-96 flex-col rounded-lg p-5 dark:bg-blackGradient">
-        <div className="dark:text-pureWhite">Chat</div>
-        <div className="grow border dark:text-pureWhite">messages</div>
+      <div className="flex h-96 w-96 flex-col rounded-lg bg-mediumGray p-5 dark:bg-blackGradient">
+        <div className="text-lightGray">chat:</div>
+        <div className="grow pt-2 pb-2 dark:text-pureWhite">
+          <div className="h-full rounded-lg bg-pureWhite p-4 dark:bg-darkBlue dark:text-white">
+            messages
+          </div>
+        </div>
         <div className="min-h-10 flex flex-row gap-4 dark:text-pureWhite">
           <textarea
             onChange={handleChange}
@@ -28,18 +32,18 @@ export default function ChatBox() {
             value={value}
             className="
             dark:placeholder-gray-400 
-            dark:focus:ring-blue-500 
             dark:focus:border-blue-500 
             block 
             w-full 
-            rounded-lg border 
-            border-mediumGray 
-            p-2.5 text-sm 
+            rounded-lg 
+            p-2.5 
+            text-sm 
+            focus:outline-4
             dark:bg-darkBlue 
             dark:text-white"
           />
           <div className="flex items-end">
-            <button className="h-fit w-20 border align-bottom">send</button>
+            <button className="h-7 rounded-lg text-sm w-20 align-bottom text-pureWhite bg-orange">send</button>
           </div>
         </div>
       </div>
