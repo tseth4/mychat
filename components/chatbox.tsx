@@ -1,7 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import autoSizeTextArea from "hooks/autoSizeTextArea";
+import Pusher from "pusher-js";
+// import * as PusherTypes from "pusher-js";
+import { env } from "src/env/client.mjs";
+import { useSession } from "next-auth/react";
 
 export default function ChatBox() {
+  const { data: session } = useSession();
+
   const [value, setValue] = useState("");
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -11,6 +17,22 @@ export default function ChatBox() {
     const val = evt.target?.value;
     setValue(val);
   };
+
+  // var presenceChannel: PusherTypes.PresenceChannel;
+  useEffect(() => {
+    const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
+      cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
+      authEndpoint: "api/pusher/auth"
+    });
+    const channel = pusher.subscribe("presence-channel");
+    channel.bind("pusher:subscription_succeeded", function (members: any) {
+      members.each(function (member: any) {
+        // do something with member
+        console.log(member);
+      });
+    });
+    console.log(pusher);
+  }, []);
 
   return (
     <>
