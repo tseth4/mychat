@@ -1,13 +1,9 @@
-// import { type NextPage } from "next";
-// import Link from "next/link";
 import Head from "next/head";
 import React, { ReactNode } from "react";
-// import Header from "./login";
 import { useTheme } from "next-themes";
-// import { ThemeProvider } from "next-themes";
 import Header from "./header";
 
-export default function Layout({ children }: { children: ReactNode }) {
+const Layout = ({ children }: { children: ReactNode }) => {
   const { theme, setTheme } = useTheme();
   const handleSetTheme = () => {
     if (theme === "light") {
@@ -35,3 +31,5 @@ export default function Layout({ children }: { children: ReactNode }) {
     </>
   );
 }
+
+export default Layout;

@@ -1,6 +1,4 @@
-import Head from "next/head";
-// import Link from "next/link";
-import React, { FunctionComponent, ReactNode, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import autoSizeTextArea from "hooks/autoSizeTextArea";
 
 export default function ChatBox() {
@@ -43,7 +41,9 @@ export default function ChatBox() {
             dark:text-white"
           />
           <div className="flex items-end">
-            <button className="h-7 rounded-lg text-sm w-20 align-bottom text-pureWhite bg-orange">send</button>
+            <button className="h-7 w-20 rounded-lg bg-orange align-bottom text-sm text-pureWhite">
+              send
+            </button>
           </div>
         </div>
       </div>
