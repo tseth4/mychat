@@ -33,7 +33,11 @@ export default async (req, res) => {
       const channel = req.body.channel_name
       const presenceData = {
         user_id: randomUserId,
-        user_info: { name: session.user.name, email: session.user.email },
+        user_info: {
+          name: session.user.name,
+          email: session.user.email,
+          image: session.user.image
+        },
       };
       // generate auth token
       const auth = pusher.authorizeChannel(socketId, channel, presenceData);
