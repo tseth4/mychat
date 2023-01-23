@@ -13,7 +13,6 @@ function hash(input, digits) {
   return Math.abs(hash % (10 ** digits));
 }
 
-
 export default async (req, res) => {
   console.log("auth endpoint: ", req.body)
   const session = await unstable_getServerSession(req, res, authOptions)

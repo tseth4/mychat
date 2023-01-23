@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
-
-export default function Header() {
+interface HeaderProps {
+  pusher: any;
+}
+export default function Header({ pusher }: HeaderProps) {
   const { data: session } = useSession();
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    console.log(session)
-  }, [session])
+  // useEffect(() => {
+  //   console.log(session);
+  // }, [session]);
 
   const handleAuth = (ty: string) => {
     if (ty === "signin") {
       signIn()
         .then((res) => {
           console.log(res);
+          pusher.subscribe("presence-channel");
+
         })
         .catch((e) => console.log(e));
     } else {
       signOut()
         .then((res) => {
           console.log(res);
+          pusher.unsubscribe("presence-channel");
         })
         .catch((e) => console.log(e));
     }
@@ -27,7 +32,7 @@ export default function Header() {
 
   return (
     <>
-    <div>{error ? error : ""}</div>
+      <div>{error ? error : ""}</div>
       {!session && (
         <>
           <div className="text-white">Not signed in</div> <br />
@@ -62,25 +67,4 @@ export default function Header() {
       )}
     </>
   );
-
-  // if (session) {
-  //   return (
-  //     <>
-  //       <div className="text-white">
-  //         {session.user ? session.user.email : ""} <br />
-  //       </div>
-  //       <button className="text-white" onClick={() => signOut()}>
-  //         Sign out
-  //       </button>
-  //     </>
-  //   );
-  // }
-  // return (
-  //   <>
-  //     <div className="text-white">Not signed in</div> <br />
-  //     <button className="text-white" onClick={() => signIn()}>
-  //       Sign in
-  //     </button>
-  //   </>
-  // );
 }
