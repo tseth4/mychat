@@ -1,16 +1,8 @@
-import Pusher from 'pusher';
-import { env } from "../../../env/server.mjs";
+// import { env } from "../../../env/server.mjs";
 import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]"
+import { pusher } from "@/lib/pusher-server";
 
-
-const pusher = new Pusher({
-  appId: env.PUSHER_APP_ID,
-  key: env.PUSHER_KEY,
-  secret: env.PUSHER_SECRET,
-  cluster: env.PUSHER_CLUSTER,
-  encrypted: true
-});
 
 function hash(input, digits) {
   let hash = 0;
@@ -45,8 +37,6 @@ export default async (req, res) => {
     } else {
       throw new Error('Unauthorized')
     }
-
-
   } catch (err) {
     console.log('Pusher Auth Error: ', err)
     res.status(403).end()

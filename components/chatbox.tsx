@@ -50,8 +50,6 @@ export default function ChatBox() {
   }, []);
 
   useEffect(() => {
-    // const pusher = contextData.pusher;
-    // const channel = pusher.subscribe("presence-channel");
     const channel = contextData.channel;
     if (channel) {
       channel.bind("pusher:subscription_succeeded", function (members: any) {
@@ -59,11 +57,10 @@ export default function ChatBox() {
           setLocalMembers([...localMembers, member]);
         });
       });
-      // channel.bind("pusher:member_added", memberAdded);
-      // channel.bind("pusher:member_removed", memberRemoved);
-      channel.bind("pusher:member_added", function (member: any) {
-        console.log("pusher:member_added", member);
-      });
+
+      // channel.bind("pusher:member_added", function (member: any) {
+      //   console.log("pusher:member_added", member);
+      // });
       channel.bind("client-my-event", (data: any) => {
         console.log("data.message: ", data.message);
       });
@@ -77,6 +74,8 @@ export default function ChatBox() {
 
   const handleMyEvent = () => {
     const channel = contextData.channel;
+    let trigger = channel.trigger("client-my-event", "Hello World!!!");
+    console.log("handleMyEvent channel: ", trigger);
   };
 
   return (
