@@ -1,10 +1,12 @@
 import { pusher } from "@/lib/pusher-server.ts"
 
 export default async function handler(req, res) {
-  const { message, name } = req.body
+  const { message, name, email, image } = req.body
   await pusher.trigger('presence-channel', 'chat-update', {
     message,
-    name
+    name,
+    email,
+    image
   })
   res.json({ status: 200 })
 }

@@ -1,81 +1,33 @@
 import React, { useRef, useState, useEffect } from "react";
-import autoSizeTextArea from "hooks/autoSizeTextArea";
-// import Pusher from "pusher-js";
-// import { env } from "src/env/client.mjs";
-import { useSession } from "next-auth/react";
-import { ChatContext } from "@/lib/chat-context";
-import { useContext } from "react";
+import autoSizeTextArea from "@/hooks/autoSizeTextArea";
+import { ChatType } from "src/pages";
 
-export default function ChatBox() {
-  const contextData = useContext(ChatContext);
+interface ChatBoxProps {
+  messageToSend: string;
+  setMessageToSend: (msg: string) => void;
+  handleSendMessage: (e: any) => void;
+  chats: ChatType[];
+}
 
-  const { data: session } = useSession();
-
-  const [messageValue, setMessageValue] = useState("");
-  const [localMembers, setLocalMembers] = useState<any>([]);
+export default function ChatBox({
+  messageToSend,
+  setMessageToSend,
+  handleSendMessage,
+  chats,
+}: ChatBoxProps) {
+  console.log("chatbox props: ", {
+    messageToSend,
+    setMessageToSend,
+    handleSendMessage,
+    chats,
+  });
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  autoSizeTextArea(textAreaRef.current, messageValue, 125);
+  autoSizeTextArea(textAreaRef.current, messageToSend, 125);
 
   const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = evt.target?.value;
-    setMessageValue(val);
-  };
-
-  useEffect(() => {
-    // const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
-    //   cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
-    //   authEndpoint: "api/pusher/auth",
-    // });
-    // const channel = pusher.subscribe("presence-channel");
-    // channel.bind("pusher:subscription_succeeded", function (members: any) {
-    //   members.each(function (member: any) {
-    //     setLocalMembers([...localMembers, member]);
-    //   });
-    // });
-    // // channel.bind("pusher:member_added", memberAdded);
-    // // channel.bind("pusher:member_removed", memberRemoved);
-    // channel.bind("pusher:member_added", function (member: any) {
-    //   console.log("pusher:member_added", member);
-    //   // console.log(channel.members.count);
-    // });
-    // channel.bind("pusher:member_removed", function (member: any) {
-    //   console.log("pusher:member_removed", member);
-    //   // console.log(channel.members.count);
-    // });
-    // channel.bind("client-my-event", (data: any) => {
-    //   console.log("data.message: ", data.message);
-    // });
-    // console.log(pusher);
-  }, []);
-
-  useEffect(() => {
-    const channel = contextData.channel;
-    if (channel) {
-      channel.bind("pusher:subscription_succeeded", function (members: any) {
-        members.each(function (member: any) {
-          setLocalMembers([...localMembers, member]);
-        });
-      });
-
-      // channel.bind("pusher:member_added", function (member: any) {
-      //   console.log("pusher:member_added", member);
-      // });
-      channel.bind("client-my-event", (data: any) => {
-        console.log("data.message: ", data.message);
-      });
-      console.log(channel);
-    }
-  }, [contextData]);
-
-  useEffect(() => {
-    console.log("localMembers: ", localMembers);
-  }, [localMembers]);
-
-  const handleMyEvent = () => {
-    const channel = contextData.channel;
-    let trigger = channel.trigger("client-my-event", "Hello World!!!");
-    console.log("handleMyEvent channel: ", trigger);
+    setMessageToSend(val);
   };
 
   return (
@@ -93,7 +45,7 @@ export default function ChatBox() {
             ref={textAreaRef}
             id="default-input"
             rows={1}
-            value={messageValue}
+            value={messageToSend}
             className="
             dark:placeholder-gray-400 
             dark:focus:border-blue-500 
@@ -108,7 +60,7 @@ export default function ChatBox() {
           />
           <div className="flex items-end">
             <button
-              onClick={() => handleMyEvent()}
+              onClick={(e) => handleSendMessage(e)}
               className="h-7 w-20 rounded-lg bg-orange align-bottom text-sm text-pureWhite"
             >
               send
