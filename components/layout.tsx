@@ -4,15 +4,6 @@ import React, { ReactNode } from "react";
 // import Header from "./header";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  // const { theme, setTheme } = useTheme();
-  // const handleSetTheme = () => {
-  //   if (theme === "light") {
-  //     setTheme("dark");
-  //   } else {
-  //     setTheme("light");
-  //   }
-  // };
-
   return (
     <>
       <Head>
@@ -20,16 +11,12 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <meta name="description" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* <Header /> */}
-      {/* <Header /> */}
-      {/* <a onClick={() => handleSetTheme()} className="border-2">
-        light/dark
-      </a> */}
-      <main className="bg-paleBlue dark:bg-darkBlue flex min-h-screen items-center justify-center border-blackGradient dark:border-pureWhite">
+
+      <main className="flex min-h-screen items-center justify-center border-blackGradient bg-paleBlue dark:border-pureWhite dark:bg-darkBlue">
         {children}
       </main>
     </>
   );
-}
+};
 
 export default Layout;
