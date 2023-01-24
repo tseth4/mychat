@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import autoSizeTextArea from "@/hooks/autoSizeTextArea";
 import { ChatType, UserType } from "src/pages";
+import { useSession } from "next-auth/react";
 
 interface ChatBoxProps {
   messageToSend: string;
@@ -9,7 +10,6 @@ interface ChatBoxProps {
   chats: ChatType[];
   onlineUserCount: number;
   onlineUsers: UserType[];
-  // usersRemoved: UserType[];
 }
 
 export default function ChatBox({
@@ -19,8 +19,7 @@ export default function ChatBox({
   chats,
   onlineUserCount,
   onlineUsers,
-}: // usersRemoved,
-ChatBoxProps) {
+}: ChatBoxProps) {
   // console.log("chatbox props: ", {
   //   messageToSend,
   //   setMessageToSend,
@@ -29,6 +28,10 @@ ChatBoxProps) {
   //   onlineUserCount,
   //   onlineUsers,
   // });
+  // let messageClassName = `ml-2 bg-lightGray px-2 rounded-lg text-pureWhite`
+  const { data: session } = useSession();
+
+  // const [messageBg, setMessageBg] = useState("bg-lightGray");
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   autoSizeTextArea(textAreaRef.current, messageToSend, 125);
@@ -41,22 +44,50 @@ ChatBoxProps) {
   return (
     <>
       <div className="flex flex-row">
-        <div className="flex h-96 w-40 flex-col rounded-l-lg bg-mediumGray p-5 dark:bg-blackGradient">
-          <div className="text-lightGray">users:</div>
-          <div>
+        <div className="flex h-96 w-40 flex-col rounded-l-lg bg-pureWhite p-5 dark:bg-blackGradient">
+          <div className="text-sm font-medium text-darkBlueGreen dark:text-pureWhite">
+            Users ({onlineUserCount}):
+          </div>
+          <div className="mt-2">
             {onlineUsers.map((user) => (
-              <div key={user.id}>{user.name}</div>
+              <div className="flex flex-row" key={user.id}>
+                <div className="flex w-4 justify-center">
+                  <img
+                    className="object-contain"
+                    src={user.image}
+                    alt="profile-picture"
+                  />
+                </div>
+                <div className="ml-2 text-sm"> {user.name}</div>
+              </div>
             ))}
           </div>
         </div>
-        <div className="flex h-96 w-96 flex-col rounded-lg bg-mediumGray p-5 dark:bg-blackGradient">
-          <div className="text-lightGray">chat:</div>
-          <div className="grow pt-2 pb-2 dark:text-pureWhite">
-            <div className="h-full rounded-lg bg-pureWhite p-4 dark:bg-darkBlue dark:text-white">
+        <div className="flex h-96 w-96 flex-col rounded-r-lg border-l-2 border-l-paleBlueGreen bg-pureWhite p-5 dark:border-0 dark:bg-blackGradient">
+          <div className="text-sm font-medium text-darkBlueGreen dark:text-pureWhite">
+            Chat:
+          </div>
+          <div className="h-32 grow pt-2 pb-2 dark:text-pureWhite">
+            <div className="flex h-full flex-col gap-2 overflow-y-auto rounded-lg border-2 border-paleBlueGreen	bg-pureWhite pt-2 dark:border-0 dark:bg-darkBlue dark:text-white">
               {chats.map((c, i) => (
-                <div key={i} className="flex flex-row">
-                  <div>{c.name}:</div>
-                  <div className="ml-2">{c.message}</div>
+                <div key={i} className="mx-2 flex flex-row items-center">
+                  <div className="flex w-4 justify-center">
+                    <img
+                      className="object-contain"
+                      src={c.image}
+                      alt="profile picture"
+                    />
+                  </div>
+                  <div className="ml-2 text-sm">{c.name}:</div>
+                  <div
+                    className={`ml-2 ${
+                      session && session.user && session.user.email === c.email
+                        ? "bg-orange"
+                        : "bg-lightGray"
+                    } rounded-lg px-2 text-pureWhite`}
+                  >
+                    {c.message}
+                  </div>
                 </div>
               ))}
             </div>
@@ -74,9 +105,12 @@ ChatBoxProps) {
             block 
             w-full 
             rounded-lg 
-            p-2.5 
-            text-sm 
+            border-2 
+            border-paleBlueGreen 
+            p-2.5
+            text-sm
             focus:outline-4
+            dark:border-0
             dark:bg-darkBlue 
             dark:text-white"
             />

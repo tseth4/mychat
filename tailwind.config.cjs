@@ -16,8 +16,12 @@ module.exports = {
         'darkBlue': '#272e38',
         'mediumGray': '#7c8798',
         'pureWhite': '#FFF',
-        'orange': '#f77615',
-        'lightGray': '#969fad'
+        // 'orange': '#f77615',
+        'orange': '#ee726a',
+        'lightGray': '#969fad',
+        'paleBlue': '#f0f3fd',
+        'paleBlueGreen': '#e8f8f9',
+        'darkBlueGreen': '#073a4a'
       }
     }
 

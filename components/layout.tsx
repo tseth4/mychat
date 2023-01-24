@@ -1,17 +1,17 @@
 import Head from "next/head";
 import React, { ReactNode } from "react";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
 // import Header from "./header";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { theme, setTheme } = useTheme();
-  const handleSetTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
-  };
+  // const { theme, setTheme } = useTheme();
+  // const handleSetTheme = () => {
+  //   if (theme === "light") {
+  //     setTheme("dark");
+  //   } else {
+  //     setTheme("light");
+  //   }
+  // };
 
   return (
     <>
@@ -22,10 +22,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
       </Head>
       {/* <Header /> */}
       {/* <Header /> */}
-      <a onClick={() => handleSetTheme()} className="border-2">
+      {/* <a onClick={() => handleSetTheme()} className="border-2">
         light/dark
-      </a>
-      <main className="flex min-h-screen items-center justify-center border-blackGradient dark:border-pureWhite">
+      </a> */}
+      <main className="bg-paleBlue dark:bg-darkBlue flex min-h-screen items-center justify-center border-blackGradient dark:border-pureWhite">
         {children}
       </main>
     </>

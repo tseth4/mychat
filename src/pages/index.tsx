@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import ChatBox from "@/components/chatbox";
 import { env } from "src/env/client.mjs";
 import Pusher from "pusher-js";
@@ -68,22 +68,16 @@ const Home: NextPage = () => {
     let tempOnlineUsers = onlineUsers;
     for (let i = 0; i < tempOnlineUsers.length; i++) {
       if (tempOnlineUsers[i] && tempOnlineUsers[i]?.id === id) {
-        // console.log("splicing");
         tempOnlineUsers.splice(i, 1);
       }
     }
-    // console.log("tempOnlineUsers", tempOnlineUsers);
     setOnlineUsers(tempOnlineUsers);
   };
 
   useEffect(() => {
-    // console.log("home mounted");
     if (pusher) {
-      // console.log("pusher available");
-
       const channel = pusher.subscribe("presence-channel");
       channel.bind("pusher:subscription_succeeded", (members: any) => {
-        // console.log("subscribing", members);
         setOnlineUserCount(members.count);
         for (const m in members.members) {
           let temp_user = {
@@ -95,7 +89,6 @@ const Home: NextPage = () => {
           addUser(temp_user);
         }
       });
-      // console.log("index channel: ", channel);
 
       channel.bind("pusher:member_added", async (member: any) => {
         console.log("member added", member);
@@ -155,19 +148,21 @@ const Home: NextPage = () => {
 
   if (status === "unauthenticated") {
     return (
-      <>
-        <div className="text-white">Not signed in</div> <br />
-        <a
-          href={`/api/auth/signin`}
-          className="text-white"
-          onClick={(e) => {
-            e.preventDefault();
-            handleAuth();
-          }}
-        >
-          Sign in
-        </a>
-      </>
+      <div className="flex flex-col">
+        <div className="text-white">Not signed in</div>
+        <div className="border-0 text-center rounded-md bg-orange mt-4">
+          <a
+            href={`/api/auth/signin`}
+            className="text-white"
+            onClick={(e) => {
+              e.preventDefault();
+              handleAuth();
+            }}
+          >
+            Sign in
+          </a>
+        </div>
+      </div>
     );
   }
 
