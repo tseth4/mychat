@@ -20,18 +20,7 @@ export default function ChatBox({
   onlineUserCount,
   onlineUsers,
 }: ChatBoxProps) {
-  // console.log("chatbox props: ", {
-  //   messageToSend,
-  //   setMessageToSend,
-  //   handleSendMessage,
-  //   chats,
-  //   onlineUserCount,
-  //   onlineUsers,
-  // });
-  // let messageClassName = `ml-2 bg-lightGray px-2 rounded-lg text-pureWhite`
   const { data: session } = useSession();
-
-  // const [messageBg, setMessageBg] = useState("bg-lightGray");
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   autoSizeTextArea(textAreaRef.current, messageToSend, 125);
