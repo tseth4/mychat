@@ -3,9 +3,10 @@ import { useSession, signIn } from "next-auth/react";
 import ChatBox from "@/components/chatbox";
 import { env } from "src/env/client.mjs";
 import Pusher from "pusher-js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Header from "@/components/header";
+import { useCountRenders } from "@/hooks/useCountRenders";
 
 enum ChatTypeMeta {
   Message = "message",
@@ -29,54 +30,18 @@ export interface UserType {
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
-  // console.log("Status ", status);
-  let pusher: any;
+  const pusher: any = useRef(null);
+  useCountRenders();
   useEffect(() => {
-    if (status === "authenticated") {
-      pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
+    if (status === "authenticated" && !pusher.current) {
+      console.log("instantiating");
+      pusher.current = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
         cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
         authEndpoint: "api/pusher/auth",
       });
     }
-  }, [status]);
-
-  const [chats, setChats] = useState<ChatType[]>([]);
-  const [messageToSend, setMessageToSend] = useState("");
-  const [onlineUserCount, setOnlineUserCount] = useState(0);
-  const [onlineUsers, setOnlineUsers] = useState<UserType[]>([]);
-
-  const handleAuth = () => {
-    signIn()
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => console.log(e));
-  };
-
-  const addUser = (newUser: UserType) => {
-    let temp = onlineUsers;
-    for (const u of temp) {
-      if (u.id === newUser.id) {
-        return;
-      }
-    }
-    setOnlineUsers((prevOnlineUsers) =>
-      prevOnlineUsers ? [...prevOnlineUsers, newUser] : [newUser]
-    );
-  };
-  const removeUser = (id: number) => {
-    let tempOnlineUsers = onlineUsers;
-    for (let i = 0; i < tempOnlineUsers.length; i++) {
-      if (tempOnlineUsers[i] && tempOnlineUsers[i]?.id === id) {
-        tempOnlineUsers.splice(i, 1);
-      }
-    }
-    setOnlineUsers(tempOnlineUsers);
-  };
-
-  useEffect(() => {
-    if (pusher) {
-      const channel = pusher.subscribe("presence-channel");
+    if (pusher.current) {
+      const channel = pusher.current.subscribe("presence-channel");
       channel.bind("pusher:subscription_succeeded", (members: any) => {
         setOnlineUserCount(members.count);
         for (const m in members.members) {
@@ -120,14 +85,46 @@ const Home: NextPage = () => {
           prevChats ? [...prevChats, newMessage] : [newMessage]
         );
       });
-
       return () => {
-        pusher.unsubscribe("presence-channel");
+        console.log("unsubscribing");
+        pusher.current.unsubscribe("presence-channel");
       };
     }
-
-    // when user closes, unsub from channel
   }, [status]);
+
+  const [chats, setChats] = useState<ChatType[]>([]);
+  const [messageToSend, setMessageToSend] = useState("");
+  const [onlineUserCount, setOnlineUserCount] = useState(0);
+  const [onlineUsers, setOnlineUsers] = useState<UserType[]>([]);
+
+  const handleAuth = () => {
+    signIn()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const addUser = (newUser: UserType) => {
+    let temp = onlineUsers;
+    for (const u of temp) {
+      if (u.id === newUser.id) {
+        return;
+      }
+    }
+    setOnlineUsers((prevOnlineUsers) =>
+      prevOnlineUsers ? [...prevOnlineUsers, newUser] : [newUser]
+    );
+  };
+  const removeUser = (id: number) => {
+    let tempOnlineUsers = onlineUsers;
+    for (let i = 0; i < tempOnlineUsers.length; i++) {
+      if (tempOnlineUsers[i] && tempOnlineUsers[i]?.id === id) {
+        tempOnlineUsers.splice(i, 1);
+      }
+    }
+    setOnlineUsers(tempOnlineUsers);
+  };
 
   const handleSendMessage = async (e: any) => {
     // console.log("handleSendMessage: ", messageToSend);
@@ -150,7 +147,7 @@ const Home: NextPage = () => {
     return (
       <div className="flex flex-col">
         <div className="text-white">Not signed in</div>
-        <div className="border-0 text-center rounded-md bg-orange mt-4">
+        <div className="mt-4 rounded-md border-0 bg-orange text-center">
           <a
             href={`/api/auth/signin`}
             className="text-white"

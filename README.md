@@ -4,24 +4,23 @@
  A chat app using Next.JS, TypeScript, NextAuth, Github OAuth, and Pusher
 
 ### Why
-My main goal for the project is to learn more about social authentication and real time data by building a chat application that is secured using oauth.
+My main goal for the project is to learn more about Next.js with serverless functions, TypeScript, Tailwind CSS, Vercel,oauth2 authentication and real time data by building a chat application.
 
-I decided to go with Next.js specifically the t3 stack since they already integrate social authentication pretty seamlessly out of the box. I'm also just curious about what all the hype is about with this stack.
+I decided to go with [t3-app](https://create.t3.gg/) stack since they already integrate TypeScript and social authentication pretty seamlessly.
 
-<!-- while also learning more about Next.js with serverless functions, social authentication, tailwind, and websockets. I figured the best project for that would be to build a chat application. -->
+After some research I learned that its not possible possible to maintain a websocket connection to a serverless function which Next.js on Vercel via [vercel guides](https://vercel.com/guides/do-vercel-serverless-functions-support-websocket-connections). So I decided to try and utilize a third-party service called Pusher that was recommended by Vercel guides, which allow us send and recieve data in real time. 
 
-After some research I learned that its not possible possible to maintain a websocket connection to a serverless function which next.js uses. I decided to try and utilize a third-party servuce called Pusher which allow us send and recieve data in real time.
-
-reference: https://vercel.com/guides/do-vercel-serverless-functions-support-websocket-connections
 ### src/pages/_app.tsx
-_app.tsx is a next.js "App" component that next.js uses to initizlize pages. In this file we override this component to control page initialization to wrap our our pages with the nextauth SessionProvider (which gives us access to our session), next ThemeProvider to provide dark  mode support, and our layout component **(components/layout.tsx)** to wrap each page with a consistent layout.
+**_app.tsx** is a Next.js "App" component that Next.js uses to initizlize pages. In this file we override this component to control page initialization. We wrap our pages with the Nextauth SessionProvider (which gives us access to our session), next ThemeProvider to provide dark  mode support, and our layout component **(components/layout.tsx)** to wrap each page with a consistent layout.
 
 ### src/pages/api/index.js
-This is the api end point where we will send and HTTP post request that will take data from the body. to a pusher trigger which will trigger our event called 'chat-update' in our 'presense-channel'. via [Docs](https://pusher.com/docs/channels/using_channels/presence-channels/): ***Presence channels build on the security of Private channels and expose the additional feature of an awareness of who is subscribed to that channel.*** 
+This is the api end point where we will send and HTTP post request that will take data from the body, to a pusher trigger which will trigger our event called **'chat-update'** in our **'presense-channel'**.      
 
-*Note: We want to be able to see users who are online while remain private so using presence channel made the mot sense.*
+via [Docs](https://pusher.com/docs/channels/using_channels/presence-channels/): ***Presence channels build on the security of Private channels and expose the additional feature of an awareness of who is subscribed to that channel.*** 
 
-Here we will be triggering an even called chat update along with message, name (name of sender), email, image (github image), and meta (the type of message; in case we wanted to update the chat with activity info as well)
+***Note: We want to be able to see users who are online while remain private so using presence channel made the most sense.***
+
+Here we will be triggering an even called **chat-update** and within the body of the request we have data on our message, name (name of sender), email, image (github image), and meta (the type of message; in case we wanted to update the chat with activity info as well)
 
 ```
 import { pusher } from "@/lib/pusher-server.ts"
@@ -68,12 +67,12 @@ export interface UserType {
 ```
 
 
-Then we will check the status of our authentication by invoking the useSession hook from the next auth library which provides us with information about the current user.
+Then we will check the **status** of our authentication by invoking the **useSession** hook from the next auth library which provides us with information about the current user.
 ```
   const { data: session, status } = useSession();
 ```
 
-If the user is "unauthenticated" a Sign in button is rendered which when clicked invokes a function called "handleAuth" which invokes a signIn function that is imported from the next auth library. This sign in function sends a request to the authentication server(in this case github) to verify user credentials. When successfull it creates a session for the user.
+If the user is **unauthenticated** a sign-in button is rendered which when clicked invokes a function called **handleAuth** which invokes a **SignIn** function that is imported from the **Nextauth** library. This **Signin** function sends a request to the authentication server (in this case github) to verify user credentials. When successfull it creates a session for the user.
 
 ```
 import { useSession, signIn } from "next-auth/react";
@@ -112,33 +111,33 @@ const [messageToSend, setMessageToSend] = useState("");
 const [onlineUserCount, setOnlineUserCount] = useState(0);
 const [onlineUsers, setOnlineUsers] = useState<UserType[]>([]);
 ```
-This is where we will keep our states using the react useState hook
-##### We also have two 'useEffects':
-useEffect is a react hook that allows you to perform side effects in functional components.
+This is where we will keep our states using the react **useState** hook
+#### We also have a useEffect:
+**useEffect** is a react hook that allows you to perform side effects in functional components.
 ```
-  let pusher: any;
-
+  const pusher: any = useRef(null);
   useEffect(() => {
-    if (status === "authenticated") {
-      pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
+    if (status === "authenticated" && !pusher.current) {
+      console.log("instantiating");
+      pusher.current = new Pusher(env.NEXT_PUBLIC_PUSHER_KEY, {
         cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
         authEndpoint: "api/pusher/auth",
       });
     }
+    ...
   }, [status]);
 ```
-In this **useEffect** we will assign pusher assign pusher to a new instance of pusher if the user is **authenticated**, we will put the route we made earlier in our api directory as the **authEndPoint** which will authneticate clients connecting to the Pusher server. This **useEffect** is invoked everytime the status of the user changes so if we are sign out pusher remains 'null' 
+Afterwards if pusher is instantiated we will subscribe to our **presence-channel**
 
 ```
-useEffect(() => {
-    if (pusher) {
-      const channel = pusher.subscribe("presence-channel");
-      ...
-
-}, [status]);
-
+    if (pusher.current) {
+      const channel = pusher.current.subscribe("presence-channel");
 ```
-This second **useEffect** houses our channel logic.
+
+In this **useEffect** we will make use of useRef and assign our pusher instance to it. If the user is **authenticated** and there currently is no Pusher instantiate we will assign our pusher ref a new instance. We will use the route we made earlier in our api directory as the **authEndPoint** which will authenticate clients connecting to the Pusher server. This **useEffect** is invoked everytime the status of the user changes to handle not instatiating pusher if the user signs out.
+
+
+Further down the useEffect houses our channel logic. We listen to a channel event by using **bind**.
 Here if pusher is successfully instantiated we can subscribe to our presense channel.
 
 ```
@@ -146,7 +145,7 @@ channel.bind("pusher:subscription_succeeded", (members: any) => {
 ...
 }
 ```
-Here we listen to a channel event by using **bind**. If subscription succeeds we will update our **onlineUsers** and **onlineUserCount** state. 
+If subscription succeeds we will update our **onlineUsers** and **onlineUserCount** state. 
 ```
 channel.bind("pusher:member_added", async (member: any) => {
 ```
@@ -162,7 +161,7 @@ channel.bind("chat-update", function (data: ChatType) {
 Here we listen to our even **chat-update**, whenever this event is **triggered** we will take our data and add it to our **chats** state.
 ```
 return () => {
-  pusher.unsubscribe("presence-channel");
+  pusher.current.unsubscribe("presence-channel");
 };
 ```
 At the end of the **useEffect** when the component unmounts we will **unsubscribe** from our channel.

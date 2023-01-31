@@ -26,14 +26,13 @@ export default function Header({ pusher }: HeaderProps) {
       signIn()
         .then((res) => {
           console.log(res);
-          pusher.subscribe("presence-channel");
         })
         .catch((e) => console.log(e));
     } else {
       signOut()
         .then((res) => {
           console.log(res);
-          pusher.unsubscribe("presence-channel");
+          pusher.current.unsubscribe("presence-channel");
         })
         .catch((e) => console.log(e));
     }
