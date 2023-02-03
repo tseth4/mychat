@@ -27,14 +27,20 @@ export default function Header({ pusher }: HeaderProps) {
         .then((res) => {
           console.log(res);
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          console.log(e);
+          setError(e);
+        });
     } else {
       signOut()
         .then((res) => {
           console.log(res);
           pusher.current.unsubscribe("presence-channel");
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          console.log(e);
+          setError(e);
+        });
     }
   };
   useEffect(() => {

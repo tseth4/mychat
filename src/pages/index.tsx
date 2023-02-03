@@ -6,7 +6,7 @@ import Pusher from "pusher-js";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Header from "@/components/header";
-import { useCountRenders } from "@/hooks/useCountRenders";
+// import { useCountRenders } from "@/hooks/useCountRenders";
 
 enum ChatTypeMeta {
   Message = "message",
@@ -31,7 +31,7 @@ export interface UserType {
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
   const pusher: any = useRef(null);
-  useCountRenders();
+  // useCountRenders();
   useEffect(() => {
     if (status === "authenticated" && !pusher.current) {
       console.log("instantiating");
