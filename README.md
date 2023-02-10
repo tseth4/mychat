@@ -7,6 +7,11 @@
 - <a href="#pages">Pages</a>
 
 #### Video Demo: https://www.youtube.com/watch?v=nun1Ts9YANU
+#### starting server
+```
+yarn install
+yarn dev
+```
 
 #### Description:
 
